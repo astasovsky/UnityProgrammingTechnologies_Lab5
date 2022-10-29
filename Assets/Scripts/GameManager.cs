@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,12 +10,23 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI gameOverText;
     [SerializeField] private Button restartButton;
+    [SerializeField] private GameObject titleScreen;
 
     [HideInInspector] public bool isGameActive;
 
-    private const float SpawnRate = 1;
+    private float _spawnRate = 1;
 
     private int _score;
+
+    public void StartGame(int difficulty)
+    {
+        titleScreen.gameObject.SetActive(false);
+        _spawnRate /= difficulty;
+        isGameActive = true;
+        _score = 0;
+        StartCoroutine(SpawnTarget());
+        UpdateScore(0);
+    }
 
     public void UpdateScore(int scoreToAdd)
     {
@@ -37,18 +46,11 @@ public class GameManager : MonoBehaviour
         restartButton.onClick.AddListener(delegate { SceneManager.LoadScene(SceneManager.GetActiveScene().name); });
     }
 
-    private void Start()
-    {
-        isGameActive = true;
-        UpdateScore(0);
-        StartCoroutine(SpawnTarget());
-    }
-
     private IEnumerator SpawnTarget()
     {
         while (isGameActive)
         {
-            yield return new WaitForSeconds(SpawnRate);
+            yield return new WaitForSeconds(_spawnRate);
             int index = Random.Range(0, targets.Length);
             Instantiate(targets[index]);
         }
