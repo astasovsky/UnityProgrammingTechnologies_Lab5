@@ -11,12 +11,14 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gameOverText;
     [SerializeField] private Button restartButton;
     [SerializeField] private GameObject titleScreen;
+    [SerializeField] private TextMeshProUGUI livesText;
 
     [HideInInspector] public bool isGameActive;
 
     private float _spawnRate = 1;
 
     private int _score;
+    private int _lives;
 
     public void StartGame(int difficulty)
     {
@@ -25,6 +27,7 @@ public class GameManager : MonoBehaviour
         isGameActive = true;
         _score = 0;
         StartCoroutine(SpawnTarget());
+        UpdateLives(3);
         UpdateScore(0);
     }
 
@@ -34,11 +37,14 @@ public class GameManager : MonoBehaviour
         scoreText.text = "Score: " + _score;
     }
 
-    public void GameOver()
+    public void UpdateLives(int livesToChange)
     {
-        isGameActive = false;
-        gameOverText.gameObject.SetActive(true);
-        restartButton.gameObject.SetActive(true);
+        _lives += livesToChange;
+        livesText.text = "Lives: " + _lives;
+        if (_lives <= 0)
+        {
+            GameOver();
+        }
     }
 
     private void Awake()
@@ -54,5 +60,12 @@ public class GameManager : MonoBehaviour
             int index = Random.Range(0, targets.Length);
             Instantiate(targets[index]);
         }
+    }
+
+    private void GameOver()
+    {
+        isGameActive = false;
+        gameOverText.gameObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
     }
 }
