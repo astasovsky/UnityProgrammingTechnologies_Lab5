@@ -15,6 +15,16 @@ public class Target : MonoBehaviour
     private Rigidbody _targetRigidbody;
     private GameManager _gameManager;
 
+    public void DestroyTarget()
+    {
+        if (_gameManager.isGameActive)
+        {
+            _gameManager.UpdateScore(pointValue);
+            Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
+            Destroy(gameObject);
+        }
+    }
+
     private void Awake()
     {
         _targetRigidbody = GetComponent<Rigidbody>();
@@ -26,16 +36,6 @@ public class Target : MonoBehaviour
         _targetRigidbody.AddForce(RandomForce(), ForceMode.Impulse);
         _targetRigidbody.AddTorque(RandomTorque(), RandomTorque(), RandomTorque(), ForceMode.Impulse);
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-    }
-
-    private void OnMouseDown()
-    {
-        if (_gameManager.isGameActive)
-        {
-            _gameManager.UpdateScore(pointValue);
-            Instantiate(explosionParticle, transform.position, explosionParticle.transform.rotation);
-            Destroy(gameObject);
-        }
     }
 
     private void OnTriggerEnter(Collider other)
