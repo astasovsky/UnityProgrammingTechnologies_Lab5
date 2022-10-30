@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Button restartButton;
     [SerializeField] private GameObject titleScreen;
     [SerializeField] private TextMeshProUGUI livesText;
+    [SerializeField] private GameObject pauseScreen;
 
     [HideInInspector] public bool isGameActive;
 
@@ -19,6 +20,7 @@ public class GameManager : MonoBehaviour
 
     private int _score;
     private int _lives;
+    private bool _paused;
 
     public void StartGame(int difficulty)
     {
@@ -50,6 +52,31 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         restartButton.onClick.AddListener(delegate { SceneManager.LoadScene(SceneManager.GetActiveScene().name); });
+    }
+
+    private void Update()
+    {
+        //Check if the user has pressed the P key
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            ChangePaused();
+        }
+    }
+
+    private void ChangePaused()
+    {
+        if (_paused)
+        {
+            _paused = false;
+            pauseScreen.SetActive(false);
+            Time.timeScale = 1;
+        }
+        else
+        {
+            _paused = true;
+            pauseScreen.SetActive(true);
+            Time.timeScale = 0;
+        }
     }
 
     private IEnumerator SpawnTarget()
